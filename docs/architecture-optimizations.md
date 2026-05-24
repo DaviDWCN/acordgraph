@@ -64,6 +64,31 @@ Single SLO numbers ("p95 < 1.5s") are necessary but insufficient. Per
 stage budgets make regressions diagnosable in production without
 instrumenting from scratch during the incident.
 
+## Updates from follow-up changes
+
+> The four follow-up OpenSpec changes (`harden-ontology-and-temporality`,
+> `extend-ingestion-and-lineage`, `expand-retrieval-and-api`,
+> `governance-pii-and-sla`) further refine this design. Notable
+> deltas vs the table above:
+>
+> - **Embedding dimension** is no longer hard-coded to 1536. It is
+>   configurable per environment (1536 for OpenAI-class models, 1024
+>   for BGE-M3, 768 for E5-Mistral); the contract is that the
+>   ingestion pipeline and the vector index agree. See
+>   `openspec/changes/harden-ontology-and-temporality/`.
+> - **Provenance** is promoted from scattered properties to first-class
+>   `:Document` and `:Chunk` nodes linked via `[:EXTRACTED_FROM]`.
+>   See `openspec/changes/extend-ingestion-and-lineage/`.
+> - **Cypher templates** are organised into a Catalogue
+>   (`assets/cypher/catalog.yaml`); each query family has a stable
+>   `intent_id`. See `openspec/changes/expand-retrieval-and-api/`.
+> - **Exclusion-vs-coverage** precedence is now a four-layer rule
+>   (Endorsement > Rider > base-Exclusion > base-Coverage), not a
+>   single "exclusion wins" flag.
+> - **PII** coverage extends to `Chunk.text`, embeddings, and source
+>   filenames; embedding inversion is mitigated by embedding only the
+>   redacted form. See `openspec/changes/governance-pii-and-sla/`.
+
 ## Risks deliberately accepted at this stage
 
 - Vendor selection (LLM, embeddings, reranker) is **deferred**. The

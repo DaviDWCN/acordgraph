@@ -26,7 +26,9 @@ acordgraph/
 │               └── api/spec.md
 ├── docs/
 │   ├── technical-spec.md                   # Inbound brief v1.1 (verbatim)
-│   └── architecture-optimizations.md       # Deviations & rationale
+│   ├── architecture-optimizations.md       # Deviations & rationale
+│   ├── acord-mapping.md                    # ACORD AIM ↔ graph element map
+│   └── glossary.md                         # Canonical term definitions
 └── assets/
     ├── cypher/
     │   ├── 01_constraints_indexes.cypher   # Schema bootstrap (Neo4j 5.13+)
@@ -56,3 +58,21 @@ The next OpenSpec change (`implement-acord-kg`) will:
 2. Build the ingestion pipelines (structured ETL + LLM extraction).
 3. Implement the GraphRAG serving layer per `specs/api/spec.md`.
 4. Wire the evaluation harness and CI quality gate.
+
+## Follow-up requirement & architecture changes
+
+Four documentation-only OpenSpec changes refine the bootstrap before
+any code is written. They are ordered; each builds on the previous.
+
+| # | Change ID                              | Focus                                                                                          |
+|---|----------------------------------------|------------------------------------------------------------------------------------------------|
+| 1 | `harden-ontology-and-temporality`      | Endorsement / Coverage reification, Subject subtypes, state nodes, generic peril coding, configurable embedding dim. |
+| 2 | `extend-ingestion-and-lineage`         | Extractor profiles (wording / claim-form / endorsement), prompt-injection isolation, numeric re-verification, `:Document` / `:Chunk` lineage. |
+| 3 | `expand-retrieval-and-api`             | Cypher Template Catalogue + `intent_id`, 4-layer precedence (Endorsement > Rider > Excl > Cover), `/v1/ingest`, `/v1/feedback`, `/v1/lineage/{id}`, formal CI metric definitions. |
+| 4 | `governance-pii-and-sla`               | Extended PII coverage (Chunk.text, embeddings, filenames), embedding-inversion defence, FX policy, availability / RPO / RTO SLOs, super-node guard, dual-write index rebuild. |
+
+Each change lives in `openspec/changes/<change-id>/` with its
+`proposal.md`, `design.md`, `tasks.md`, and per-capability delta
+`specs/<capability>/spec.md`. Definitions of all domain terms used
+across these documents are in `docs/glossary.md`; the ACORD-to-graph
+mapping is in `docs/acord-mapping.md`.
